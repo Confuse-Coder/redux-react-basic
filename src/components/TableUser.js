@@ -1,7 +1,24 @@
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const TableUser = () => {
+  const [listUser, setListUser] = useState();
+  const fetchAllUsers = async () => {
+    const res = await axios.get('http://localhost:8080/users/all');
+    const data = res && res.data ? res.data : [];
+    setListUser(data);
+  };
+
+  useEffect(() => {
+    fetchAllUsers();
+  }, []);
+
+  const handleDeleteUser = (user) => {
+    console.log('check ', user);
+  };
+
   return (
     <>
       <hr />
@@ -10,30 +27,28 @@ const TableUser = () => {
           <thead>
             <tr>
               <th>#</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Username</th>
+              <th>Email</th>
+              <th>User Name</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Thornton</td>
-              <td>Thornton</td>
-              <td>@twitter</td>
-            </tr>
+            {listUser &&
+              listUser.length > 0 &&
+              listUser.map((item, index) => {
+                return (
+                  <tr key={`users-${index}`}>
+                    <td>{index + 1}</td>
+                    <td>{item.email}</td>
+                    <td>{item.username}</td>
+                    <td>
+                      <button className="btn btn-danger" onClick={() => handleDeleteUser(item)}>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </Table>
       </Container>
