@@ -8,6 +8,8 @@ import { fetchAllUsers } from '../action/actions';
 const TableUser = (props) => {
   const dispatch = useDispatch();
   const listUsers = useSelector((state) => state.user.listUsers);
+  const isLoading = useSelector((state) => state.user.isLoading);
+  const isError = useSelector((state) => state.user.isError);
 
   useEffect(() => {
     // fetchAllUsers();
@@ -32,22 +34,41 @@ const TableUser = (props) => {
             </tr>
           </thead>
           <tbody>
-            {listUsers &&
-              listUsers.length > 0 &&
-              listUsers.map((item, index) => {
-                return (
-                  <tr key={`users-${index}`}>
-                    <td>{index + 1}</td>
-                    <td>{item.email}</td>
-                    <td>{item.username}</td>
-                    <td>
-                      <button className="btn btn-danger" onClick={() => handleDeleteUser(item)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+            {isError === true ? (
+              <>
+                <div>Something went wrongs, please try again!</div>
+              </>
+            ) : (
+              <>
+                {isLoading === true ? (
+                  <>
+                    <div>Loading data...</div>
+                  </>
+                ) : (
+                  <>
+                    {listUsers &&
+                      listUsers.length > 0 &&
+                      listUsers.map((item, index) => {
+                        return (
+                          <tr key={`users-${index}`}>
+                            <td>{index + 1}</td>
+                            <td>{item.email}</td>
+                            <td>{item.username}</td>
+                            <td>
+                              <button
+                                className="btn btn-danger"
+                                onClick={() => handleDeleteUser(item)}
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </>
+                )}
+              </>
+            )}
           </tbody>
         </Table>
       </Container>
